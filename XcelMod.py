@@ -5,7 +5,7 @@ import os
 # 0.1 imp necessary modules
 import openpyxl
 
-# import time
+# import time 
 
 print('imported openpyxl, os')
 # os.chdir('C:\Users\konra\Documents\GitHub\Ukens Dental Nordent to PS transfer\XcelMod.py')
