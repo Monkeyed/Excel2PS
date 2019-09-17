@@ -12,12 +12,12 @@ import openpyxl
 print('imported openpyxl, os and setup.py file')
 
 # newTable = openpyxl.load_workbook(input()) [only when multiple tables in folder]
-cats_wb = openpyxl.load_workbook('files\cats.xlsx')
-cats = cats_wb['Sheet1']
-
 
 
 # Beginning Categories Functions
+
+cats_wb = openpyxl.load_workbook('files\cats.xlsx')
+cats = cats_wb['Sheet1']
 
 # Rename all cell elements in Column 'H' to have ' von Nordent' behind them+++++++
 def cat_meta_title():
@@ -113,7 +113,29 @@ runCatFunction()
 
 # Beginning image functions
 
-#wb_imgs = openpyxl.load_workbook('files\products_images.xlsx')
-#imgs = wb_imgs['Sheet1']
+wb_imgs = openpyxl.load_workbook('files\products_images.xlsx')
+imgs = wb_imgs['Sheet1']
 
-# def img_rename():
+# go through images folder; depending on string value, 
+
+#def img_rename():
+ #for x in range (1, len(imgs['A'])):
+
+for files in os.walk("files\product_images"):
+    print(files[2])
+
+#image list now copied to list img_list
+
+img_list = files[2]
+#print(img_list)
+for x in range(0, len(img_list)):
+    imgs['A'][x+1].value = img_list[x]
+    #print(str(imgs['A'][x+1].value))
+    name_string = img_list[x]
+    img_name = name_string.partition("_")
+    print(img_name)
+    imgs['B'][x+1].value = str(img_name[0])
+
+#print(str(imgs['A'].length))
+
+wb_imgs.save('files\products_images.xlsx')
