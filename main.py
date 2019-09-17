@@ -10,6 +10,7 @@ import os
 import openpyxl
 
 print('imported openpyxl, os and setup.py file')
+print('')
 
 # newTable = openpyxl.load_workbook(input()) [only when multiple tables in folder]
 
@@ -93,7 +94,7 @@ def cat_headimg_to_catimg():
 def cat_save_file():
     cats_wb.save('files\cats_edited.xlsx')
 
-def runCatFunction():
+def run_cat_funs():
     cat_meta_title()
     cat_corr_parents()
     cat_friendly_urls()
@@ -104,7 +105,9 @@ def runCatFunction():
 
     cat_save_file()
 
-runCatFunction()
+print('running categories functions...')
+run_cat_funs()
+print('Categories done.')
 
 
 # End Category Functions
@@ -113,29 +116,67 @@ runCatFunction()
 
 # Beginning image functions
 
+print('')
+
 wb_imgs = openpyxl.load_workbook('files\products_images.xlsx')
 imgs = wb_imgs['Sheet1']
 
-# go through images folder; depending on string value, 
-
-#def img_rename():
- #for x in range (1, len(imgs['A'])):
+# import listing of all images into second list of object 'files', from os.walk() function
 
 for files in os.walk("files\product_images"):
-    print(files[2])
+    img_list = files[2]
 
 #image list now copied to list img_list
 
-img_list = files[2]
-#print(img_list)
-for x in range(0, len(img_list)):
-    imgs['A'][x+1].value = img_list[x]
-    #print(str(imgs['A'][x+1].value))
-    name_string = img_list[x]
-    img_name = name_string.partition("_")
-    print(img_name)
-    imgs['B'][x+1].value = str(img_name[0])
+#extracting product id from image name and copying to column C, product_id
+def imgs_to_prods():
+    for x in range(0, len(img_list)):
 
-#print(str(imgs['A'].length))
+        # copying image names to first column after column name
+        imgs['A'][x+1].value = img_list[x]
+
+        # splitting image names by underscore to extract product id
+        name_string = img_list[x]
+        img_name = name_string.partition("_")
+        # print(img_name)
+
+        # copying image names to second column after column name
+        imgs['C'][x+1].value = str(img_name[0])
+
+
+
+
+#check whole list for multiple images of single product TAKEN OUT FOR NOW, WILL DO BY HAND
+#y = 0
+
+#for x in range(0, len(img_list)):
+    #empty list will hold all images of a single product 
+    #imgList = []
+
+    
+    #y = imgs['C'][x+1].value
+    #for length of columns, add each column A value to imgList where y == product_id
+    #for a in range(0, len(img_list)):
+        #if the id is identical to y, push the column A value, the image name, into imgList
+       #if y == imgs['A'][a+1].value:
+            #imgList.append(imgs['A'][a+1].value)
+        #print(imgList)
+    #once the whole file has been checked for y, push list into y's column C cell
+
+
+#add absolute image URLs
+
+def prod_img_urls():
+    for x in range(1, len(imgs['A'])):
+            oldImg = str(imgs['A'][x].value)
+            imgs['B'][x].value = str('https://ukens-dental.de/img/nordent_de_prod_images/original_images/' + oldImg)
+            # print(str(imgs['B'][x].value) + '.....' + str(imgs['A'][x].value))
+
+print('running image functions...')   
+def run_img_funs():
+    imgs_to_prods()
+    prod_img_urls()
 
 wb_imgs.save('files\products_images.xlsx')
+
+print('product images functions done.')
