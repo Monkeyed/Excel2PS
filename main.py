@@ -9,7 +9,7 @@
 import os
 import openpyxl
 
-print('imported openpyxl, os and setup.py file')
+print('imported openpyxl and os')
 print('')
 
 # newTable = openpyxl.load_workbook(input()) [only when multiple tables in folder]
@@ -27,7 +27,7 @@ def cat_meta_title():
         oldTitle = str(cats['H'][x].value)
         newTitle = str(oldTitle) + ' von Nordent'
         cats['H'][x].value = newTitle
-    print('1.) Column H: Meta Titles adjusted.')
+    #print('1.) Column H: Meta Titles adjusted.')
 
 # Rename parent_id according to categories_name column 'G' of respective parent++++++
 def cat_corr_parents():
@@ -40,7 +40,7 @@ def cat_corr_parents():
         else:
             cats['C'][x].value = str(cats['G'][oldParent_id - 1].value)
             # print(str(cats['C'][x].value))
-    print('2.) Column C: Category Parents changed from ID# to actual parent names.')
+    #print('2.) Column C: Category Parents changed from ID# to actual parent names.')
 
 # Rename categories_meta_keywords to friendly URL title ++++++++
 def cat_friendly_urls():
@@ -54,7 +54,7 @@ def cat_friendly_urls():
             cats['J'][x].value = str(cats['J'][x].value).replace(" - ", " ")
         cats['J'][x].value = str('Nordent ' + cats['J'][x].value)
         # print(str(cats['J'][x].value))
-    print('3.) Column J: can now be used as friendly URL links.')
+    #print('3.) Column J: can now be used as friendly URL links.')
 
 # Rename img links to have rel. path (/html/ukens-dental/img/nordent_de_cat_images/+)
 def cat_img_links():
@@ -63,7 +63,7 @@ def cat_img_links():
         oldImg = str(cats['F'][x].value)
         cats['F'][x].value = str('https://ukens-dental.de/img/nordent_de_cat_images/' + oldImg)
         # print(str(cats['F'][x].value) + '.....' + str(cats['A'][x].value))
-    print('4.) Column F: img links point to: https://ukens-dental.de/img/nordent_de_cat_images/ + xxx.jpg.')
+    #print('4.) Column F: img links point to: https://ukens-dental.de/img/nordent_de_cat_images/ + xxx.jpg.')
 
 # Rewrite Categories to be 1xxx, so Nordent is in thousands, whereas Calset is then 2000
 def cat_corr_cat_ids():
@@ -71,7 +71,7 @@ def cat_corr_cat_ids():
     for x in range(1, len(cats['A'])):
         cats['A'][x].value = int(cats['A'][x].value) + 1000
         # print(str(cats['A'][x].value))
-    print('5.) Column A: Category IDs have been +1000, now range from 1002 to 1126.')
+    #print('5.) Column A: Category IDs have been +1000, now range from 1002 to 1126.')
 
 
 # Make Meta Descriptions same as Category Titles from H, and add description text'
@@ -79,7 +79,7 @@ def cat_meta_desc():
     for x in range(1, len(cats['I'])):
         cats['I'][x].value = str(str(
             cats['H'][x].value) + ' - Langlebige Dentalinstrumente und Zubehör, exklusiv erhältlich bei Ukens Dental')
-    print('6.) Column I: Adjusted Meta Descriptions. ')
+    #print('6.) Column I: Adjusted Meta Descriptions. ')
 
 # Copy column F to B for absolute image paths
 def cat_headimg_to_catimg():
@@ -90,10 +90,6 @@ def cat_headimg_to_catimg():
         # print('7.) Column B: now same abs Paths as F')
 
 
-# save of all changes to new file
-def cat_save_file():
-    cats_wb.save('files\cats_edited.xlsx')
-
 def run_cat_funs():
     cat_meta_title()
     cat_corr_parents()
@@ -102,12 +98,11 @@ def run_cat_funs():
     cat_corr_cat_ids()
     cat_meta_desc()
     cat_headimg_to_catimg()
+    cats_wb.save('files\cats_edited.xlsx')
 
-    cat_save_file()
-
-print('running categories functions...')
+print('running category functions on cats.edited.xlsx ...')
 run_cat_funs()
-print('Categories done.')
+print('category functions done.')
 
 
 # End Category Functions
@@ -117,6 +112,8 @@ print('Categories done.')
 # Beginning image functions
 
 print('')
+
+print('running image functions on products_images.xlsx ...')  
 
 wb_imgs = openpyxl.load_workbook('files\products_images.xlsx')
 imgs = wb_imgs['Sheet1']
@@ -144,39 +141,39 @@ def imgs_to_prods():
         imgs['C'][x+1].value = str(img_name[0])
 
 
+#!!! REWORK COLUMNS!!!! adding all images of a product to a single products_id
+#def all_imgs_to_single_product_id():
+    #check whole list for multiple images of single product TAKEN OUT FOR NOW, WILL DO BY HAND
+    #y = 0
 
+    #for x in range(0, len(img_list)):
+        #empty list will hold all images of a single product 
+        #imgList = []
 
-#check whole list for multiple images of single product TAKEN OUT FOR NOW, WILL DO BY HAND
-#y = 0
-
-#for x in range(0, len(img_list)):
-    #empty list will hold all images of a single product 
-    #imgList = []
-
-    
-    #y = imgs['C'][x+1].value
-    #for length of columns, add each column A value to imgList where y == product_id
-    #for a in range(0, len(img_list)):
-        #if the id is identical to y, push the column A value, the image name, into imgList
-       #if y == imgs['A'][a+1].value:
-            #imgList.append(imgs['A'][a+1].value)
-        #print(imgList)
-    #once the whole file has been checked for y, push list into y's column C cell
+        
+        #y = imgs['C'][x+1].value
+        #for length of columns, add each column A value to imgList where y == product_id
+        #for a in range(0, len(img_list)):
+            #if the id is identical to y, push the column A value, the image name, into imgList
+        #if y == imgs['A'][a+1].value:
+                #imgList.append(imgs['A'][a+1].value)
+            #print(imgList)
+        #once the whole file has been checked for y, push list into y's column C cell
 
 
 #add absolute image URLs
 
 def prod_img_urls():
     for x in range(1, len(imgs['A'])):
-            oldImg = str(imgs['A'][x].value)
-            imgs['B'][x].value = str('https://ukens-dental.de/img/nordent_de_prod_images/original_images/' + oldImg)
+        oldImg = str(imgs['A'][x].value)
+        imgs['B'][x].value = str('https://ukens-dental.de/img/nordent_de_prod_images/original_images/' + oldImg)
             # print(str(imgs['B'][x].value) + '.....' + str(imgs['A'][x].value))
 
-print('running image functions...')   
+
 def run_img_funs():
     imgs_to_prods()
     prod_img_urls()
+    wb_imgs.save('files\products_images.xlsx')
 
-wb_imgs.save('files\products_images.xlsx')
-
-print('product images functions done.')
+run_img_funs()
+print('image functions done.')
