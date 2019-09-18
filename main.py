@@ -141,23 +141,37 @@ def imgs_to_prods():
         imgs['C'][x+1].value = str(img_name[0])
 
 
-#!!! REWORK COLUMNS!!!! adding all images of a product to a single products_id
-def all_imgs_to_single_product_id():
-    for x in range(0, len(img_list)):
+#function to make lists of image names and urls
+def all_lists_and_names():
+    img_list_len = len(img_list)
+    for x in range(0, img_list_len):
         curr_id = imgs['C'][x+1].value
         curr_img_name_list = []
         curr_img_name_list.append(str(imgs['A'][x+1].value))
         imgs['D'][x+1].value = None
+        #adding url function to make it only run once
+        curr_img_url_list = []
+        curr_img_url_list.append(str(imgs['B'][x+1].value))
+        imgs['E'][x+1].value = None
         print(curr_id)
-        for y in range(0, len(img_list)):
+        for y in range(0, img_list_len):
             if curr_id == imgs['C'][y+1].value and imgs['A'][y+1].value not in curr_img_name_list:
                 curr_img_name_list.append(str(imgs['A'][y+1].value))
+            #from url function
+            if curr_id == imgs['C'][y+1].value and imgs['B'][y+1].value not in curr_img_url_list:
+                curr_img_url_list.append(str(imgs['B'][y+1].value))
         for d in range (0, len(curr_img_name_list)):
             if d == 0:
                 imgs['D'][x+1].value = str(curr_img_name_list[d])
             else:
                 imgs['D'][x+1].value = str(str(imgs['D'][x+1].value) + ',' + str(curr_img_name_list[d]))
-        print('image list done for: ' + str(imgs['C'][x+1].value))
+        #from url function
+        for e in range (0, len(curr_img_url_list)):
+            if e == 0:
+                imgs['E'][x+1].value = str(curr_img_url_list[e])
+            else:
+                imgs['E'][x+1].value = str(str(imgs['E'][x+1].value) + ',' + str(curr_img_url_list[e]))
+        print('image name and url list done for: ' + str(imgs['C'][x+1].value))
 
 def all_imgs_urls_to_single_product_id():
     for x in range(0, len(img_list)):
@@ -169,11 +183,11 @@ def all_imgs_urls_to_single_product_id():
         for y in range(0, len(img_list)):
             if curr_id == imgs['C'][y+1].value and imgs['B'][y+1].value not in curr_img_url_list:
                 curr_img_url_list.append(str(imgs['B'][y+1].value))
-        for d in range (0, len(curr_img_url_list)):
-            if d == 0:
-                imgs['E'][x+1].value = str(curr_img_url_list[d])
+        for e in range (0, len(curr_img_url_list)):
+            if e == 0:
+                imgs['E'][x+1].value = str(curr_img_url_list[e])
             else:
-                imgs['E'][x+1].value = str(str(imgs['E'][x+1].value) + ',' + str(curr_img_url_list[d]))
+                imgs['E'][x+1].value = str(str(imgs['E'][x+1].value) + ',' + str(curr_img_url_list[e]))
         print('url list done for: ' + str(imgs['C'][x+1].value))
 
 
@@ -188,8 +202,8 @@ def prod_img_urls():
 def run_img_funs():
     imgs_to_prods()
     prod_img_urls()
-    all_imgs_to_single_product_id()
-    all_imgs_urls_to_single_product_id()
+    #all_lists_and_names()
+    #all_imgs_urls_to_single_product_id()
     wb_imgs.save('files\products_images.xlsx')
 
 run_img_funs()
@@ -213,5 +227,5 @@ def prods_corr_cat_ids():
     
     for x in range(1, len(prods['B'])):
         cats['B'][x].value = int(cats['B'][x].value) + 1000
-        # print(str(cats['A'][x].value))
+        print(str(cats['A'][x].value))
     #print('5.) Column A: Category IDs have been +1000, now range from 1002 to 1126.')
