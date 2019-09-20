@@ -100,14 +100,14 @@ def run_cat_funs():
     cat_headimg_to_catimg()
     cats_wb.save('files\cats_edited.xlsx')
 
-print('running category functions on cats.edited.xlsx ...')
-run_cat_funs()
+print('running category functions on cats_edited.xlsx ...')
+#run_cat_funs()
 print('category functions done.')
 
 
 # End Category Functions
 
-#------------------------------------------------
+#-----------------------------------------------------------------------------------------------------
 
 # Beginning image functions
 
@@ -200,18 +200,43 @@ def prod_img_urls():
 
 
 def run_img_funs():
-    imgs_to_prods()
-    prod_img_urls()
+    #imgs_to_prods()
+    #prod_img_urls()
     #all_lists_and_names()
     #all_imgs_urls_to_single_product_id()
+    single_urls()
     wb_imgs.save('files\products_images.xlsx')
 
-run_img_funs()
+wb_prod_imgs_2 = openpyxl.load_workbook('files\products_images.xlsx')
+url_lists = wb_prod_imgs_2['Sheet1']
+
+wb_prod_img_urls = openpyxl.load_workbook('files\single_prod_img_urls.xlsx')
+prod_img_urls = wb_prod_img_urls['Sheet1']
+
+
+def single_urls():
+    
+    id_list = []
+
+    print('running single url function...')
+
+    for x in range (0, len(prod_img_urls['A'])):
+        if url_lists['C'][x+1].value not in id_list:
+            prod_img_urls['A'][x+1].value = url_lists['C'][x+1].value
+            prod_img_urls['B'][x+1].value = url_lists['E'][x+1].value
+            id_list.append(url_lists['A'][x+1].value)
+        wb_prod_img_urls.save('files\single_prod_img_urls.xlsx')
+
+    print('single url function done.')
+    print(id_list)
+
+
+#run_img_funs()
 print('image functions done.')
 
 # End image functions
 
-#---------------------------------------------
+#---------------------------------------------------------------------------------------
 
 # Begin product functions
 
@@ -222,10 +247,74 @@ print('running product functions on products.xlsx ...')
 wb_prods = openpyxl.load_workbook('files\products.xlsx')
 prods = wb_prods['Sheet1']
 
-# Rewrite Categories to be 1xxx, so Nordent is in thousands
+# Rewrite Categories to be written out by name, no commas in name
 def prods_corr_cat_ids():
+    # Load in categories, and makes parallel lists of the ids and names for checking
+    cats_f_wb = openpyxl.load_workbook('files\cats_edited.xlsx')
+    cats_for_prods = cats_f_wb['Sheet1']
+
+    cat_id = [] 
+    cat_names = []
+
+    for a in range(1, len(cats_for_prods['A'])):
+        cat_id.append(cats_for_prods['A'][a].value)
+        cat_names.append(cats_for_prods['G'][a].value)
+    print(cat_id)
+    print(cat_id[0])
+    print(len(cat_id))
+    print(cat_names)
+    print(cat_names[0])
+    print(len(cat_names))
+
+    # increase id by 1000, so same as cats list
+    for x in range(0, len(prods['B'])-1):
+        #print(str(prods['B'][x+1].value))
+        prods['B'][x+1].value = int(int(prods['B'][x+1].value +1000))
+        # for each value in column b (x from larger loop used), if same as some value y in
+        # cat_id list, change number to name in prods wb, and remove commas which interfere
+        # with csv uploading
+        for y in range(0, len(cat_id)):
+            if prods['B'][x+1].value == cat_id[y]:
+                prods['B'][x+1].value = cat_names[y]
+                if ',' in str(prods['B'][x+1].value):
+                    prods['B'][x+1].value = str(prods['B'][x+1].value).replace(',', '')
+                #print(str(prods['B'][x+1].value))
+        # save every time as code ends in an error
+        #wb_prods.save('files\products_post.xlsx')
+
+    #print(str(prods['B'][x+1].value))
+
     
-    for x in range(1, len(prods['B'])):
-        cats['B'][x].value = int(cats['B'][x].value) + 1000
-        print(str(cats['A'][x].value))
-    #print('5.) Column A: Category IDs have been +1000, now range from 1002 to 1126.')
+    print('increasing prods cat ids by 1000 done')
+
+
+# must remove # and ; from name column E (pound and semicolon symbols) from product names, for PS NOT NECESSARY, AS REPLACED IN 'products.xlsx' FILE
+def prods_corr_symbols():
+    for x in range(1, len(prods['E'])):
+        #print(str(prods['E'][x].value))
+        if '#' in str(prods['E'][x].value):
+            print('this title with # is up: ' + str(prods['E'][x].value))
+            prods['E'][x].value = str(prods['E'][x].value).replace(',', 'Nr. ')
+            print('the title is now: ' + str(prods['E'][x].value))
+        if ';' in str(prods['E'][x].value):
+            print('this title with # is up: ' + str(prods['E'][x].value))
+            prods['E'][x].value = str(prods['E'][x].value).replace(';', '')
+            print('the title is now: ' + str(prods['E'][x].value))
+
+# Function to collect and add tags, taken from: 
+# category (column B), product name until first comma (colum E)
+# should check for no overlaps
+# keep tags minimalistic
+def prods_tags():
+
+
+
+
+def run_prod_funs():
+    prods_corr_cat_ids()
+    #prods_corr_symbols()
+    wb_prods.save('files\products_post.xlsx')
+
+run_prod_funs()
+print('product functions done.')
+
