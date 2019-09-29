@@ -1,18 +1,8 @@
 # Program for modifying excel tables of categories and products for Prestashop import
 
-# import setup_ps_prep
-
-
-# Definitions of all functions
-
-
 import os
 import openpyxl
-
-print('imported openpyxl and os')
-print('')
-
-# newTable = openpyxl.load_workbook(input()) [only when multiple tables in folder]
+import re
 
 
 # Beginning Categories Functions
@@ -20,7 +10,7 @@ print('')
 cats_wb = openpyxl.load_workbook('files\cats.xlsx')
 cats = cats_wb['Sheet1']
 
-# Rename all cell elements in Column 'H' to have ' von Nordent' behind them+++++++
+# Rename all cell elements in Column 'H' to have ' von Nordent' behind them
 def cat_meta_title():
     
     for x in range(1, len(cats['H'])):
@@ -29,7 +19,7 @@ def cat_meta_title():
         cats['H'][x].value = newTitle
     #print('1.) Column H: Meta Titles adjusted.')
 
-# Rename parent_id according to categories_name column 'G' of respective parent++++++
+# Rename parent_id according to categories_name column 'G' of respective parent
 def cat_corr_parents():
     
     for x in range(1, len(cats['C'])):
@@ -42,7 +32,7 @@ def cat_corr_parents():
             # print(str(cats['C'][x].value))
     #print('2.) Column C: Category Parents changed from ID# to actual parent names.')
 
-# Rename categories_meta_keywords to friendly URL title ++++++++
+# Rename categories_meta_keywords to friendly URL title 
 def cat_friendly_urls():
     
     for x in range(1, len(cats['J'])):
@@ -65,7 +55,7 @@ def cat_img_links():
         # print(str(cats['F'][x].value) + '.....' + str(cats['A'][x].value))
     #print('4.) Column F: img links point to: https://ukens-dental.de/img/nordent_de_cat_images/ + xxx.jpg.')
 
-# Rewrite Categories to be 1xxx, so Nordent is in thousands, whereas Calset is then 2000
+# Rewrite Categories to be 1xxx, so Nordent is in thousands, whereas Calset is then 2000 (future)
 def cat_corr_cat_ids():
     
     for x in range(1, len(cats['A'])):
@@ -107,7 +97,8 @@ print('category functions done.')
 
 # End Category Functions
 
-#-----------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
 # Beginning image functions
 
@@ -236,7 +227,8 @@ print('image functions done.')
 
 # End image functions
 
-#---------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 # Begin product functions
 
@@ -286,6 +278,8 @@ def prods_corr_cat_ids():
 
     
     print('increasing prods cat ids by 1000 done')
+    wb_prods.save('files\products.xlsx')
+    print('cat chanes now saved to products.xlsx')
 
 
 # must remove # and ; from name column E (pound and semicolon symbols) from product names, for PS NOT NECESSARY, AS REPLACED IN 'products.xlsx' FILE
@@ -306,14 +300,26 @@ def prods_corr_symbols():
 # should check for no overlaps
 # keep tags minimalistic
 def prods_tags():
+    for x in range(1, len(prods['E'])):
+        # first append category
+        prods_tags = str(str(prods['E'][x].value) 
+        + ' von Nordent ist in Kategorie ' + 
+        str(prods['B'][x].value) + 
+        ' und wird angeboten von Ukens Dental.')
+        #print(prods_tags)
+        pattern = re.compile(r'(?<=\d),(?=\d)')
+        pattern.sub('.',prods_tags)
+        if ',' in prods_tags:
+            prods_tags = prods_tags.replace(',', '')
+        print(prods_tags)
 
 
-
-
+# OUT OF CONVENIENCE SAVING CHANGES TO products.xlsx !!!! so don't have to run corr_cat_ids
 def run_prod_funs():
-    prods_corr_cat_ids()
+    #prods_corr_cat_ids()
     #prods_corr_symbols()
-    wb_prods.save('files\products_post.xlsx')
+    prods_tags()
+    wb_prods.save('files\products.xlsx')
 
 run_prod_funs()
 print('product functions done.')
