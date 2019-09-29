@@ -295,23 +295,41 @@ def prods_corr_symbols():
             prods['E'][x].value = str(prods['E'][x].value).replace(';', '')
             print('the title is now: ' + str(prods['E'][x].value))
 
-# Function to collect and add tags, taken from: 
-# category (column B), product name until first comma (colum E)
-# should check for no overlaps
-# keep tags minimalistic
+# alt tags for images and product tags
 def prods_tags():
+    prods['J'][0].value = str('image_alt_tags')
+    prods['K'][0].value = str('prod_alt_tags')
     for x in range(1, len(prods['E'])):
-        # first append category
+        # string of category and product name with some filler for alt image tags
         prods_tags = str(str(prods['E'][x].value) 
         + ' von Nordent ist in Kategorie ' + 
         str(prods['B'][x].value) + 
-        ' und wird angeboten von Ukens Dental.')
-        #print(prods_tags)
+        ' und wird angeboten von Ukens Dental')
+        # if commas in size of something, replace with . to maintain size
         pattern = re.compile(r'(?<=\d),(?=\d)')
         pattern.sub('.',prods_tags)
+        # otherwise, delete all commas as each images' tags are separated by so
         if ',' in prods_tags:
             prods_tags = prods_tags.replace(',', '')
-        print(prods_tags)
+        prods['J'][x].value = prods_tags
+        #print(prods['J'][x].value)
+        # determine how many images per product need an alt description, make as many as needed by count of commas, now up to 3
+        com_count = str(prods['I'][x].value)
+        com_count.count(',')
+        if com_count.count(',') == 1:
+            prods['J'][x].value = str(prods['J'][x].value + ',' + prods['J'][x].value)
+        if com_count.count(',') == 2:
+            prods['J'][x].value = str(prods['J'][x].value + ',' + prods['J'][x].value + ',' + prods['J'][x].value)
+        # now the actual product tags, which is category, product, nordent and ukens dental, Dentalinstrumente
+        prod_alt_tags = str(str(prods['E'][x].value) 
+        + ',Nordent,' + 
+        str(prods['B'][x].value) + 
+        ',Ukens Dental' + ',Dentalinstrumente')
+        pattern = re.compile(r'(?<=\d),(?=\d)')
+        pattern.sub('.',prod_alt_tags)
+        prods['K'][x].value = prod_alt_tags
+        print(prods['K'][x].value)
+
 
 
 # OUT OF CONVENIENCE SAVING CHANGES TO products.xlsx !!!! so don't have to run corr_cat_ids
